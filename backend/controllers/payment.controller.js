@@ -10,6 +10,8 @@ export const createCheckoutSession = async (req, res) => {
 			return res.status(400).json({ error: "Invalid or empty products array" });
 		}
 
+		const baseUrl = process.env.NODE_ENV === 'production' ? `${req.protocol}://${req.get('host')}` : process.env.CLIENT_URL;
+
 		let totalAmount = 0;
 
 		const lineItems = products.map((product) => {
@@ -41,8 +43,8 @@ export const createCheckoutSession = async (req, res) => {
 			payment_method_types: ["card"],
 			line_items: lineItems,
 			mode: "payment",
-			success_url: `${process.env.CLIENT_URL}/purchase-success?session_id={CHECKOUT_SESSION_ID}`,
-			cancel_url: `${process.env.CLIENT_URL}/purchase-cancel`,
+			success_url: `${baseUrl}/purchase-success?session_id={CHECKOUT_SESSION_ID}`,
+			cancel_url: `${baseUrl}/purchase-cancel`,
 			discounts: coupon
 				? [
 						{
